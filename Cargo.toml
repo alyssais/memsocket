@@ -1,0 +1,6 @@
+[package]
+name = "memsocket"
+version = "0.1.0"
+authors = ["Alyssa Ross <hi@alyssa.is>"]
+
+[dependencies]
