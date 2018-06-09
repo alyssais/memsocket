@@ -9,8 +9,8 @@ use std::str::from_utf8;
 use tokio::prelude::*;
 
 #[test]
-fn async_write_then_read() {
-    let (client, server) = memsocket::new();
+fn write_then_read() {
+    let (client, server) = memsocket::unbounded();
 
     tokio::runtime::current_thread::Runtime::new()
         .unwrap()
@@ -25,8 +25,8 @@ fn async_write_then_read() {
 }
 
 #[test]
-fn async_read_then_write() {
-    let (client, server) = memsocket::new();
+fn read_then_write() {
+    let (client, server) = memsocket::unbounded();
 
     tokio::runtime::current_thread::Runtime::new()
         .unwrap()
