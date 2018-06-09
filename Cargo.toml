@@ -1,6 +1,6 @@
 [package]
 name = "memsocket"
-version = "0.1.1"
+version = "0.1.2-alpha.0"
 authors = ["Alyssa Ross <hi@alyssa.is>"]
 description = "An asynchronous in-memory socket-like interface."
 repository = "https://github.com/alyssais/memsocket"
