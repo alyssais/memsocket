@@ -5,8 +5,8 @@
 //! memsocket provides a asynchronous socket-like interface for connecting
 //! clients and servers in-memory.
 //!
-//! The [`bounded`](fn.bounded.html) [`unbounded`](fn.unbounded.html) methods
-//! (analogous to bounded and unbounded
+//! The [`bounded`](fn.bounded.html) and [`unbounded`](fn.unbounded.html)
+//! methods (analogous to bounded and unbounded
 //! [Channels](https://docs.rs/futures/0.1.21/futures/sync/mpsc/index.html))
 //! return a pair of objects, both of which are
 //! [`AsyncRead`](https://docs.rs/tokio/0.1/tokio/io/trait.AsyncRead.html) and
