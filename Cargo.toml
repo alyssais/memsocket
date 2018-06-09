@@ -11,3 +11,4 @@ readme = "README.md"
 
 [dependencies]
 tokio = "0.1.7"
+futures = "0.1.21"

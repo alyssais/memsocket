@@ -8,13 +8,15 @@ use Socket;
 
 impl Write for Socket {
     fn write(&mut self, bytes: &[u8]) -> Result<usize, Error> {
-        if self.write_closed.get() {
-            Err(Error::new(ErrorKind::BrokenPipe, "closed"))
-        } else {
-            self.write_buffer.borrow_mut().extend_from_slice(bytes);
-            task::current().notify();
-            Ok(bytes.len())
-        }
+        self.sender
+            .as_ref()
+            .and_then(|sender| {
+                bytes.iter().fold(Some(()), |acc, byte| {
+                    acc.and_then(|_| sender.unbounded_send(*byte).ok())
+                })
+            })
+            .map(|_| bytes.len())
+            .ok_or_else(|| Error::new(ErrorKind::BrokenPipe, "closed"))
     }
 
     fn flush(&mut self) -> Result<(), Error> {
@@ -24,7 +26,7 @@ impl Write for Socket {
 
 impl AsyncWrite for Socket {
     fn shutdown(&mut self) -> Result<Async<()>, Error> {
-        self.write_closed.set(true);
+        self.sender = None;
         Ok(Async::Ready(()))
     }
 }

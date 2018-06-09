@@ -11,38 +11,34 @@
 //! Data written to one can be read from the other, and vice versa,
 //! thus emulating a socket interface.
 
+extern crate futures;
 extern crate tokio;
-
-use std::cell::{Cell, RefCell};
-use std::sync::Arc;
 
 mod read;
 mod write;
 
+use futures::stream::{Fuse, Stream};
+use futures::sync::mpsc::{UnboundedReceiver, UnboundedSender};
+
 #[derive(Debug)]
 pub struct Socket {
-    read_buffer: Arc<RefCell<Vec<u8>>>,
-    read_closed: Arc<Cell<bool>>,
-
-    write_buffer: Arc<RefCell<Vec<u8>>>,
-    write_closed: Arc<Cell<bool>>,
+    sender: Option<UnboundedSender<u8>>,
+    receiver: Fuse<UnboundedReceiver<u8>>,
 }
 
 pub fn new() -> (Socket, Socket) {
+    use futures::sync::mpsc::unbounded;
+
+    let (left_sender, right_receiver) = unbounded();
+    let (right_sender, left_receiver) = unbounded();
+
     let left = Socket {
-        read_buffer: Default::default(),
-        read_closed: Arc::new(Cell::new(false)),
-
-        write_buffer: Default::default(),
-        write_closed: Arc::new(Cell::new(false)),
+        sender: Some(left_sender),
+        receiver: left_receiver.fuse(),
     };
-
     let right = Socket {
-        read_buffer: left.write_buffer.clone(),
-        read_closed: left.write_closed.clone(),
-
-        write_buffer: left.read_buffer.clone(),
-        write_closed: left.read_closed.clone(),
+        sender: Some(right_sender),
+        receiver: right_receiver.fuse(),
     };
 
     (left, right)
