@@ -40,7 +40,7 @@ impl Read for BoundedSocket {
             match self
                 .receiver
                 .poll()
-                .expect("Fuse<UnboundedReceiver>::poll never errors")
+                .expect("Fuse<Receiver>::poll never errors")
             {
                 Async::Ready(Some(byte)) => cursor
                     .write(&[byte])
