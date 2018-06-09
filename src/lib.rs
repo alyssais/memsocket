@@ -14,27 +14,27 @@
 extern crate tokio;
 
 use std::cell::{Cell, RefCell};
-use std::rc::Rc;
+use std::sync::Arc;
 
 mod read;
 mod write;
 
 #[derive(Debug)]
 pub struct Socket {
-    read_buffer: Rc<RefCell<Vec<u8>>>,
-    read_closed: Rc<Cell<bool>>,
+    read_buffer: Arc<RefCell<Vec<u8>>>,
+    read_closed: Arc<Cell<bool>>,
 
-    write_buffer: Rc<RefCell<Vec<u8>>>,
-    write_closed: Rc<Cell<bool>>,
+    write_buffer: Arc<RefCell<Vec<u8>>>,
+    write_closed: Arc<Cell<bool>>,
 }
 
 pub fn new() -> (Socket, Socket) {
     let left = Socket {
         read_buffer: Default::default(),
-        read_closed: Rc::new(Cell::new(false)),
+        read_closed: Arc::new(Cell::new(false)),
 
         write_buffer: Default::default(),
-        write_closed: Rc::new(Cell::new(false)),
+        write_closed: Arc::new(Cell::new(false)),
     };
 
     let right = Socket {
