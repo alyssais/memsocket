@@ -4,3 +4,4 @@ version = "0.1.0"
 authors = ["Alyssa Ross <hi@alyssa.is>"]
 
 [dependencies]
+tokio = "0.1.7"
