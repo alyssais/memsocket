@@ -5,7 +5,7 @@
 //! memsocket provides a asynchronous socket-like interface for connecting
 //! clients and servers in-memory.
 //!
-//! The [`new_pair`](fn.new_pair.html) method returns a pair of objects, both of which are
+//! The [`new`](fn.new.html) method returns a pair of objects, both of which are
 //! [`AsyncRead`](https://docs.rs/tokio/0.1/tokio/io/trait.AsyncRead.html) and
 //! [`AsyncWrite`](https://docs.rs/tokio/0.1/tokio/io/trait.AsyncWrite.html).
 //! Data written to one can be read from the other, and vice versa,
@@ -73,7 +73,7 @@ impl AsyncWrite for Socket {
     }
 }
 
-pub fn new_pair() -> (Socket, Socket) {
+pub fn new() -> (Socket, Socket) {
     let left = Socket {
         read_buffer: Default::default(),
         read_closed: Rc::new(Cell::new(false)),
@@ -95,13 +95,13 @@ pub fn new_pair() -> (Socket, Socket) {
 
 #[cfg(test)]
 mod tests {
-    use super::new_pair;
+    use super::new;
     use std::str::from_utf8;
     use tokio::{self, prelude::*};
 
     #[test]
     fn async_write_then_read() {
-        let (client, server) = new_pair();
+        let (client, server) = new();
 
         tokio::runtime::current_thread::Runtime::new()
             .unwrap()
@@ -117,7 +117,7 @@ mod tests {
 
     #[test]
     fn async_read_then_write() {
-        let (client, server) = new_pair();
+        let (client, server) = new();
 
         tokio::runtime::current_thread::Runtime::new()
             .unwrap()
