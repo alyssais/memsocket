@@ -62,9 +62,12 @@ impl Write for BoundedSocket {
             .ok_or_else(|| Error::new(ErrorKind::BrokenPipe, "closed"))?;
 
         for byte in bytes {
-            sender.try_send(*byte).map_err(|err| match err {
-                _ if err.is_full() => Error::new(ErrorKind::WouldBlock, "would block"),
-                _ => Error::new(ErrorKind::BrokenPipe, "closed"),
+            sender.try_send(*byte).map_err(|err| {
+                if err.is_full() {
+                    Error::new(ErrorKind::WouldBlock, "would block")
+                } else {
+                    Error::new(ErrorKind::BrokenPipe, "closed")
+                }
             })?;
         }
 
