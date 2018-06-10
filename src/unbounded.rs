@@ -43,8 +43,12 @@ impl Read for UnboundedSocket {
                 .expect("Fuse<UnboundedReceiver>::poll never errors")
             {
                 Async::Ready(Some(byte)) => cursor.write(&[byte])?,
-                Async::NotReady => return Err(Error::new(ErrorKind::WouldBlock, "no data")),
                 Async::Ready(None) => break,
+                Async::NotReady => if cursor.position() == 0 {
+                    return Err(Error::new(ErrorKind::WouldBlock, "no data"));
+                } else {
+                    break;
+                },
             };
         }
 

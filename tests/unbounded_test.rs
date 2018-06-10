@@ -41,3 +41,25 @@ fn read_then_write() {
         })
         .unwrap();
 }
+
+#[test]
+fn write_then_read_partial() {
+    let (client, mut server) = memsocket::unbounded();
+
+    tokio::runtime::current_thread::Runtime::new()
+        .unwrap()
+        .block_on({
+            tokio::io::write_all(client, "hello world")
+                .and_then(|(client, _)| {
+                    let mut buf = vec![0; 12];
+                    server.read(&mut buf).map(|_| (client, buf))
+                })
+                .map(|(mut client, buf)| {
+                    client.shutdown().unwrap();
+                    buf
+                })
+                .map(|result| assert_eq!(from_utf8(&result), Ok("hello world\u{0}")))
+                .map_err(|error| panic!("{:?}", error))
+        })
+        .unwrap();
+}
