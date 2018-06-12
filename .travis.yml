@@ -9,6 +9,7 @@ matrix:
         - cargo fmt -- --write-mode diff
     - rust: beta
     - rust: nightly
+      before_install: cargo install clippy
       script:
         - cargo test --verbose
         - cargo clippy
