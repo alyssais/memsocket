@@ -37,8 +37,7 @@ impl Read for BoundedSocket {
         let mut cursor = Cursor::new(bytes);
 
         for _ in 0..len {
-            match self
-                .receiver
+            match self.receiver
                 .poll()
                 .expect("Fuse<Receiver>::poll never errors")
             {
@@ -60,8 +59,7 @@ impl AsyncRead for BoundedSocket {}
 
 impl Write for BoundedSocket {
     fn write(&mut self, bytes: &[u8]) -> Result<usize, Error> {
-        let sender = self
-            .sender
+        let sender = self.sender
             .as_mut()
             .ok_or_else(|| Error::new(ErrorKind::BrokenPipe, "closed"))?;
 
